@@ -1,0 +1,898 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffca9d">
+<title>My Little Diary — A Tiny Happy Place</title>
+<style>
+:root{
+  --ink:#59404a;--cream:#fffaf0;--pink:#ffb6c9;--blue:#a8e1f2;
+  --yellow:#ffe18b;--orange:#ff9d80;--green:#c9e9a6;--purple:#d4c3ff;
+  --shadow:0 7px 0 #8f654022,0 14px 30px #6f4a4010;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  background:
+   radial-gradient(circle,#ffb8cf 2px,transparent 3px) 0 0/35px 35px,
+   radial-gradient(circle,#9cdef0 2px,transparent 3px) 17px 17px/35px 35px,
+   #fff2d9;
+}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #8bcfe5;outline-offset:3px}
+header{
+  padding:25px 16px 32px;text-align:center;
+  background:linear-gradient(130deg,#ffc0d1,#ffe4a0 55%,#b9eafa);
+  border-bottom:5px solid #fffaf0;border-radius:0 0 38px 38px;
+  position:relative;overflow:hidden;
+}
+header:before,header:after{
+  content:"";position:absolute;border-radius:50%;background:#ffffff55;
+}
+header:before{width:130px;height:130px;left:-30px;top:-50px}
+header:after{width:90px;height:90px;right:-15px;bottom:-30px}
+.brand{font-size:clamp(30px,7vw,49px);font-weight:1000;letter-spacing:-2px;position:relative}
+.brand span{color:#f07887}
+header p{margin:7px 0 0;position:relative}
+.nav{
+  display:flex;gap:8px;overflow-x:auto;padding:12px 14px;
+  position:sticky;top:0;background:#fffaf0ed;z-index:20;
+  border-bottom:2px solid #f6dfc9;backdrop-filter:blur(8px)
+}
+.nav button{flex:0 0 auto;background:white;border:2px solid #f0dfcf;padding:10px 15px;border-radius:18px;font-weight:800}
+.nav button.active{background:#ffd5df;border-color:#ff9db9}
+main{width:min(980px,100%);margin:auto;padding:16px 13px 50px}
+.panel{
+  background:var(--cream);border:3px solid white;border-radius:29px;
+  padding:20px;margin:0 0 18px;box-shadow:var(--shadow);position:relative;overflow:hidden
+}
+h2{font-size:25px;margin:0 0 10px;letter-spacing:-.7px}
+h3{margin:12px 0 8px}
+p{line-height:1.65}
+.small{font-size:13px;opacity:.8}
+.hero{
+  background:linear-gradient(125deg,#ffe0ab,#ffb5c8 55%,#a9e2f2);
+  min-height:195px;padding:25px 20px;border-radius:25px;border:2px solid white;
+  position:relative;overflow:hidden
+}
+.hero:after{content:"";position:absolute;width:140px;height:140px;right:-25px;top:-30px;border-radius:50%;background:#fff7c0aa}
+.hero h2{font-size:clamp(27px,6vw,39px);max-width:75%}
+.hero p{max-width:70%}
+.primary,.pill{
+  background:var(--orange);border-radius:16px;padding:12px 16px;
+  box-shadow:0 4px 0 #d97b66;color:#503c40;font-weight:900
+}
+.pill{background:var(--yellow);box-shadow:0 4px 0 #d5b35f;padding:10px 14px}
+.pink{background:var(--pink);box-shadow:0 4px 0 #df91a6}
+.blue{background:var(--blue);box-shadow:0 4px 0 #79b9cd}
+.purple{background:var(--purple);box-shadow:0 4px 0 #a899d4}
+.green{background:var(--green);box-shadow:0 4px 0 #94c77e}
+button:active{transform:translateY(2px)}
+.field{display:grid;gap:6px;margin:12px 0}
+input,textarea,select{
+  width:100%;border:2px solid #f0dfcf;border-radius:15px;
+  padding:12px;background:#fffdf8;min-width:0
+}
+textarea{min-height:125px;resize:vertical}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mood-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.mood{
+  background:white;border:2px solid #f0e1d2;border-radius:18px;
+  padding:8px 4px;text-align:center;font-weight:800;min-width:0
+}
+.mood svg{width:76px;max-width:100%;display:block;margin:auto}
+.mood.selected{border-color:#ff91b0;background:#fff0f5;box-shadow:0 3px 0 #ffbfd0}
+.mood span{display:block;font-size:13px;padding:5px 0 2px}
+.hidden{display:none!important}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#room{
+  height:360px;position:relative;overflow:hidden;border-radius:25px;
+  border:5px solid #fff;outline:3px solid #a6dbe6;
+  background:linear-gradient(#aee4f6 0 52%,#ffdcaa 52% 55%,#bfe59e 55% 100%);
+  isolation:isolate;touch-action:pan-y
+}
+#room.night{
+ background:linear-gradient(#454e80 0 52%,#897ba7 52% 55%,#728d80 55% 100%);
+}
+.window{
+ position:absolute;left:15px;top:17px;width:78px;height:95px;
+ border:6px solid #fff4d9;border-radius:42px 42px 9px 9px;
+ background:linear-gradient(90deg,transparent 46%,#fff4d9 47% 53%,transparent 54%),
+ linear-gradient(0deg,transparent 47%,#fff4d9 48% 53%,transparent 54%),#8bd5ef;
+ box-shadow:0 5px #d9a47b
+}
+.sun{
+ position:absolute;left:33px;top:28px;width:32px;height:32px;
+ border-radius:50%;background:#ffdc74;box-shadow:0 0 0 7px #fff0a355
+}
+.night .sun{background:#f5f0ca;box-shadow:0 0 0 8px #fff9d622}
+.cloud{position:absolute;right:22px;top:27px;width:63px;height:22px;background:white;border-radius:30px}
+.cloud:before,.cloud:after{content:"";position:absolute;background:inherit;border-radius:50%}
+.cloud:before{width:29px;height:30px;left:10px;top:-14px}
+.cloud:after{width:35px;height:35px;right:8px;top:-17px}
+.night .cloud{background:#bbc0e1}
+.wall-shelf{position:absolute;right:15px;top:116px;width:91px;height:8px;background:#bd825f;border-radius:5px;box-shadow:0 4px #936044}
+.wall-shelf:before{content:"";position:absolute;left:15px;bottom:6px;width:25px;height:33px;background:#ff9bb9;border-radius:4px 4px 8px 8px}
+.wall-shelf:after{content:"";position:absolute;right:14px;bottom:6px;width:20px;height:26px;background:#e9c8ff;border-radius:5px}
+.picture{position:absolute;left:112px;top:22px;width:49px;height:43px;background:#fff6dd;border:4px solid white;border-radius:9px;transform:rotate(-5deg)}
+.picture:after{content:"";position:absolute;inset:8px;background:linear-gradient(140deg,#ffb5c6 50%,#a3d9ad 51%);border-radius:4px}
+.rug{
+ position:absolute;left:9%;bottom:9px;width:82%;height:50px;
+ border-radius:50%;border:4px solid #fff4d8;
+ background:repeating-linear-gradient(135deg,#ffe9bb 0 13px,#fff1d4 13px 26px);
+ z-index:1;pointer-events:none
+}
+.plant{
+ position:absolute;bottom:54px;right:12%;width:32px;height:35px;z-index:2
+}
+.plant:before{content:"";position:absolute;bottom:0;left:7px;width:20px;height:19px;background:#ff9cb5;clip-path:polygon(0 0,100% 0,80% 100%,20% 100%)}
+.plant:after{content:"";position:absolute;left:12px;top:-6px;width:8px;height:14px;background:#4fbd82;border-radius:100% 0}
+.wall-star{position:absolute;top:170px;left:27%;color:#fff5bf;font-size:24px}
+.wall-heart{position:absolute;right:25%;top:195px;color:#ff9eb9;font-size:25px}
+.floor-toy{position:absolute;bottom:52px;left:16px;width:30px;height:24px;background:#ffd779;border:3px solid white;border-radius:50%;z-index:2}
+.pet{
+ position:absolute;width:86px;height:85px;z-index:5;touch-action:none;
+ user-select:none;cursor:grab;transform-origin:center bottom
+}
+.pet:active{cursor:grabbing}
+.pet svg{width:100%;height:100%;overflow:visible;pointer-events:none}
+.pet .legs{transform-box:fill-box;transform-origin:center top}
+.pet.walk .legs{animation:legWalk .85s ease-in-out infinite alternate}
+.pet.walk .legs.back{animation-delay:-.42s}
+.pet.walk .body{animation:bodyWalk 1.7s ease-in-out infinite}
+.pet.sleeping .open-eyes{display:none}
+.pet.sleeping .closed-eyes{display:block}
+.pet .closed-eyes{display:none}
+.pet.sleeping .legs{animation:none!important}
+.pet.sleeping .body{animation:none!important}
+.petname{
+ position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);
+ background:#fffaf0;border:2px solid white;border-radius:10px;
+ padding:2px 8px;font-size:11px;font-weight:900;white-space:nowrap;pointer-events:none
+}
+@keyframes legWalk{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+@keyframes bodyWalk{0%,100%{translate:0 0}50%{translate:0 -1.5px}}
+#snacks-layer{position:absolute;inset:0;z-index:12;pointer-events:none}
+.snack{
+ position:absolute;width:40px;height:40px;border-radius:14px;
+ background:#fffaf0;border:2px solid white;box-shadow:0 3px 0 #9b7a5444;
+ display:grid;place-items:center;touch-action:none;pointer-events:auto;cursor:grab;
+ user-select:none
+}
+.snack svg{width:31px;height:31px;pointer-events:none}
+.snack-label{position:absolute;top:36px;font-size:9px;font-weight:900;white-space:nowrap;background:#fff9e9;border-radius:6px;padding:1px 4px}
+.snack.bounce{animation:snackLand .2s ease-out}
+@keyframes snackLand{0%{transform:scale(1.2,.7)}65%{transform:scale(.9,1.1)}100%{transform:scale(1)}}
+#room.sleeping-room:after{
+ content:"z  z";position:absolute;right:20%;top:48%;color:#fff4c8;
+ font-size:25px;font-weight:900;letter-spacing:9px;z-index:10;pointer-events:none
+}
+#room.night .rug{background:repeating-linear-gradient(135deg,#c1b3d9 0 13px,#d5cbe7 13px 26px)}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:15px}
+.controls button{padding:14px 7px;border-radius:17px;font-weight:900;line-height:1.3}
+.snack-shop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}
+.snack-shop button{padding:12px 4px;border-radius:16px;font-weight:900;border:2px solid #fff;box-shadow:0 4px #8d6c4c30}
+.snack-shop small{display:block;font-weight:500;font-size:11px;margin-top:4px}
+.status{min-height:24px;font-size:13px;font-weight:800;color:#86616b}
+.entry{padding:13px;border:2px solid #f0e2d2;border-radius:16px;background:white;margin:10px 0}
+.entry p{white-space:pre-wrap;overflow-wrap:anywhere}
+.garden{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.garden-cell{
+ min-width:0;aspect-ratio:1;border-radius:12px;background:#fff0d4;
+ border:2px solid #f7ddb2;display:grid;place-items:center;position:relative;overflow:hidden
+}
+.garden-cell svg{width:90%;height:90%}
+.garden-cell small{position:absolute;bottom:1px;font-size:9px;background:#fffaf0bb;border-radius:5px;padding:0 3px}
+.meter{height:12px;background:#f0e2d2;border-radius:99px;overflow:hidden;margin:10px 0}
+.meter div{height:100%;background:linear-gradient(90deg,#8dddb0,#ffcf77,#ff9fbc);width:0;transition:width .4s}
+footer{text-align:center;padding:15px;font-size:12px;opacity:.75}
+@media(min-width:700px){
+ main{padding-top:23px}
+ .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+ .two-col .panel{margin:0 0 18px}
+ #room{height:400px}
+}
+@media(max-width:390px){
+ .panel{padding:15px}
+ #room{height:325px}
+ .pet{width:76px;height:76px}
+ .controls button{font-size:12px}
+ .mood-grid{gap:5px}
+ .mood svg{width:65px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">My Little <span>Diary</span></div>
+  <p>A colorful little world, made just for you.</p>
+</header>
+
+<nav class="nav" aria-label="Menu">
+  <button class="active" data-go="home">My Corner</button>
+  <button data-go="room-section">Little Room</button>
+  <button data-go="diary-section">My Diary</button>
+  <button data-go="garden-section">Memory Garden</button>
+  <button data-go="memory-section">Memory Jar</button>
+</nav>
+
+<main>
+<section id="home" class="panel">
+  <div class="hero">
+    <div class="small">YOUR LITTLE CORNER OF THE WORLD</div>
+    <h2>Hari ini, ceritamu yang paling penting.</h2>
+    <p>Simpan hal kecil yang membuat harimu berarti. Pelan-pelan, semuanya akan tumbuh menjadi kenangan.</p>
+    <button class="primary" onclick="go('diary-section')">Write a little story ↗</button>
+  </div>
+  <div class="section-title" style="margin-top:20px">
+    <h2>How are you, really?</h2><span class="small">MOOD CLUB</span>
+  </div>
+  <p class="small">Pilih karakter yang paling menggambarkan perasaanmu hari ini.</p>
+  <div id="moods" class="mood-grid"></div>
+  <div class="field">
+    <label for="quickThought"><b>A tiny thought for today</b></label>
+    <textarea id="quickThought" placeholder="Ceritakan sedikit saja..."></textarea>
+  </div>
+  <button class="primary pink" onclick="prepareDiary()">Continue my story →</button>
+</section>
+
+<section id="room-section" class="panel">
+  <div class="section-title">
+    <h2>Little Companions' Room</h2>
+    <span class="small">A tiny world to play in</span>
+  </div>
+  <p class="small">Geser hewan atau camilan dengan jari. Camilan akan jatuh ke lantai jika tidak mengenai hewan.</p>
+  <div id="room">
+    <div class="window"><div class="sun"></div></div>
+    <div class="cloud"></div><div class="picture"></div>
+    <div class="wall-shelf"></div><div class="wall-star">✦</div><div class="wall-heart">♥</div>
+    <div class="plant"></div><div class="floor-toy"></div><div class="rug"></div>
+    <div id="snacks-layer"></div>
+  </div>
+  <div class="controls">
+    <button class="blue" id="walkBtn">Let them<br>wander</button>
+    <button class="purple" id="sleepBtn">Sleepy<br>time</button>
+    <button class="pill" id="musicBtn">Play cozy<br>music</button>
+  </div>
+  <p class="small">Tip: seret temanmu, atur tempatnya, lalu biarkan mereka menikmati kamar.</p>
+  <h3>Snack shop</h3>
+  <p class="small">Pilih camilan, lalu seret camilan yang muncul ke tubuh temanmu.</p>
+  <div class="snack-shop">
+    <button style="background:#ffad99" data-snack="apple">Apple slice<small>Fresh & sweet</small></button>
+    <button style="background:#ffe18b" data-snack="cookie">Tiny cookie<small>Crunchy treat</small></button>
+    <button style="background:#a8e1f2" data-snack="carrot">Carrot<small>Little crunch</small></button>
+  </div>
+  <p id="snackStatus" class="status" aria-live="polite">Teman-temanmu sedang menunggu camilan.</p>
+</section>
+
+<section id="diary-section" class="panel">
+  <div class="section-title"><h2>My Daily Diary</h2><span class="small">YOUR PRIVATE PAGES</span></div>
+  <p class="small">Satu hari, satu halaman kecil untuk dirimu sendiri.</p>
+  <form id="diaryForm">
+    <div class="grid">
+      <div class="field"><label for="entryDate">Tanggal</label><input type="date" id="entryDate" required></div>
+      <div class="field"><label for="entryTitle">Judul cerita</label><input id="entryTitle" maxlength="100" placeholder="Hari yang..." required></div>
+    </div>
+    <div class="field"><label for="entryMood">Mood hari ini</label><select id="entryMood"></select></div>
+    <div class="field"><label for="entryBody">Apa yang terjadi hari ini?</label><textarea id="entryBody" placeholder="Tidak harus sempurna. Tulis saja apa adanya..." required></textarea></div>
+    <div class="field"><label for="entryGratitude">Satu hal yang kamu syukuri</label><input id="entryGratitude" placeholder="Sekecil apa pun boleh"></div>
+    <div class="field"><label for="entrySong">Lagu yang menemani</label><input id="entrySong" placeholder="Judul lagu atau penyanyi"></div>
+    <button class="primary" type="submit">Save today's story ♡</button>
+    <button class="pill" type="button" id="clearForm">Clear form</button>
+  </form>
+  <p id="saveStatus" class="status" aria-live="polite"></p>
+  <div class="field"><label for="searchEntries"><b>Find an old story</b></label><input id="searchEntries" placeholder="Cari judul, isi, atau mood..."></div>
+  <div id="entries"></div>
+</section>
+
+<section id="garden-section" class="panel">
+  <h2>Memory Garden</h2>
+  <p>Setiap diary yang kamu simpan membantu bunga bertumbuh. Hari pertama dimulai dari tanah, lalu tunas muncul, batang memanjang, kuncup terbentuk, dan bunga mekar pada hari ketujuh.</p>
+  <div class="section-title"><b>Weekly bloom</b><span id="gardenProgress" class="small">0/7 diary days</span></div>
+  <div class="meter"><div id="gardenMeter"></div></div>
+  <div id="mainFlower" style="width:180px;max-width:100%;margin:auto"></div>
+  <p id="flowerCaption" style="text-align:center;font-weight:900"></p>
+  <h3>Your little garden calendar</h3>
+  <div id="gardenGrid" class="garden"></div>
+  <p class="small">Satu hari dihitung satu kali jika kamu menyimpan diary pada tanggal tersebut. Minggu berikutnya dimulai dari tanah lagi dengan jenis bunga yang berbeda.</p>
+</section>
+
+<section id="memory-section" class="panel">
+  <h2>Memory Jar</h2>
+  <p>Masukkan hal kecil yang ingin kamu simpan untuk dibaca lagi nanti.</p>
+  <div class="field"><label for="memoryText">Kenangan kecil</label><textarea id="memoryText" placeholder="Aku ingin mengingat..."></textarea></div>
+  <button class="primary pink" id="addMemory">Put it in the jar</button>
+  <div id="memoryList"></div>
+  <hr style="border:0;border-top:2px dashed #eddcc8;margin:22px 0">
+  <h3>A letter to future me</h3>
+  <div class="field"><label for="futureLetter">Pesan untuk dirimu nanti</label><textarea id="futureLetter" placeholder="Hai, diriku di masa depan..."></textarea></div>
+  <button class="pill" id="saveLetter">Save my letter</button>
+  <p id="letterStatus" class="status"></p>
+  <hr style="border:0;border-top:2px dashed #eddcc8;margin:22px 0">
+  <h3>Backup & privacy</h3>
+  <p class="small">Diary tersimpan di browser perangkat ini. Unduh backup secara berkala agar tidak kehilangan kenangan.</p>
+  <button class="blue" id="exportBtn">Export backup</button>
+  <label class="pill" style="display:inline-block">Import backup<input id="importFile" type="file" accept=".json,application/json" hidden></label>
+  <button class="pill" id="pinBtn">Set diary PIN</button>
+  <button class="primary pink" id="lockBtn">Lock diary</button>
+  <button class="pill" id="unlockBtn">Unlock diary</button>
+  <p id="privacyStatus" class="status"></p>
+</section>
+<footer>Made with care, little by little. ♡</footer>
+</main>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+};
+const STORAGE = "myLittleDiaryComplete_v1";
+
+const moods = [
+ {id:"Happy",label:"Happy",bg:"#ffe78d",skin:"#f5c7a9",shirt:"#ff86ae",hair:"#63465e"},
+ {id:"Calm",label:"Calm",bg:"#bde8f6",skin:"#eec09e",shirt:"#7dcce5",hair:"#4e536e"},
+ {id:"Tired",label:"Tired",bg:"#d9c8ff",skin:"#f1c6a9",shirt:"#b5a0f2",hair:"#825541"},
+ {id:"Sad",label:"Sad",bg:"#c9e4ff",skin:"#f3c7ad",shirt:"#7fb8f1",hair:"#51516e"},
+ {id:"Anxious",label:"Anxious",bg:"#ffddbd",skin:"#efbf9f",shirt:"#ffb45f",hair:"#754c47"}
+];
+let state = loadState();
+let selectedMood = state.lastMood || "Calm";
+let walking = false, sleeping = false, audioCtx = null, musicTimer = null;
+let musicOn = false, unlocked = true, pinCode = state.pin || "";
+let pets = [], snacks = [], snackId = 0, dragPet = null, dragSnack = null;
+let frameRequested = false, lastTime = 0;
+
+function loadState(){
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE)||"{}");
+    return {
+      entries:Array.isArray(s.entries)?s.entries:[],
+      memories:Array.isArray(s.memories)?s.memories:[],
+      letter:typeof s.letter==="string"?s.letter:"",
+      pin:typeof s.pin==="string"?s.pin:"",
+      lastMood:s.lastMood||"Calm"
+    };
+  } catch {
+    return {entries:[],memories:[],letter:"",pin:"",lastMood:"Calm"};
+  }
+}
+function persist(){
+  try { localStorage.setItem(STORAGE,JSON.stringify(state)); }
+  catch { alert("Penyimpanan penuh atau diblokir browser. Ekspor backup terlebih dahulu."); }
+}
+function go(id){
+  $(id).scrollIntoView({behavior:"smooth",block:"start"});
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.go===id));
+}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+
+function girlSVG(m){
+ const faces={
+  Happy:`<path d="M29 42 Q34 35 40 42 M50 42 Q56 35 61 42" fill="none" stroke="#59424d" stroke-width="3" stroke-linecap="round"/><path d="M39 50 Q45 58 52 50" fill="#f27f9b" stroke="#a95370" stroke-width="1.5"/>`,
+  Calm:`<ellipse cx="35" cy="42" rx="3.4" ry="4.5" fill="#59424d"/><ellipse cx="55" cy="42" rx="3.4" ry="4.5" fill="#59424d"/><circle cx="36" cy="40" r="1.4" fill="white"/><circle cx="56" cy="40" r="1.4" fill="white"/><path d="M40 51 Q45 54 51 51" fill="none" stroke="#a95370" stroke-width="2.5" stroke-linecap="round"/>`,
+  Tired:`<path d="M29 43 Q35 39 40 43 M50 43 Q56 39 61 43" fill="none" stroke="#59424d" stroke-width="3" stroke-linecap="round"/><path d="M40 53 Q45 49 51 53" fill="none" stroke="#a95370" stroke-width="2.5" stroke-linecap="round"/>`,
+  Sad:`<ellipse cx="35" cy="42" rx="3.4" ry="4.5" fill="#59424d"/><ellipse cx="55" cy="42" rx="3.4" ry="4.5" fill="#59424d"/><circle cx="36" cy="40" r="1.4" fill="white"/><circle cx="56" cy="40" r="1.4" fill="white"/><path d="M39 55 Q45 48 52 55" fill="none" stroke="#a95370" stroke-width="2.5" stroke-linecap="round"/><path d="M62 47 Q70 53 63 60 Q58 55 62 47" fill="#75c7f1"/>`,
+  Anxious:`<ellipse cx="35" cy="42" rx="4" ry="5" fill="#59424d"/><ellipse cx="55" cy="42" rx="4" ry="5" fill="#59424d"/><circle cx="36" cy="40" r="1.4" fill="white"/><circle cx="56" cy="40" r="1.4" fill="white"/><path d="M29 35L39 38 M51 38L61 35" stroke="#754c47" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="45" cy="54" rx="4" ry="5" fill="#a95370"/>`
+ };
+ const hair=m.hair;
+ return `<svg viewBox="0 0 90 90" role="img" aria-label="${m.label} anime chibi">
+ <circle cx="45" cy="45" r="41" fill="${m.bg}"/>
+ <path d="M19 87 Q19 64 45 64 Q71 64 71 87Z" fill="${m.shirt}"/>
+ <path d="M24 44 Q17 12 43 10 Q68 9 67 43 L65 63 L25 63Z" fill="${hair}"/>
+ <ellipse cx="45" cy="43" rx="21" ry="25" fill="${m.skin}"/>
+ <path d="M24 36 Q17 9 43 9 Q68 8 67 36 L58 28 Q44 34 25 27Z" fill="${hair}"/>
+ <path d="M25 29 Q31 20 39 24 Q52 28 64 20 L66 31 Q48 39 25 31Z" fill="${hair}"/>
+ ${faces[m.id]}
+ <ellipse cx="31" cy="49" rx="5" ry="3" fill="#f58da4" opacity=".75"/>
+ <ellipse cx="59" cy="49" rx="5" ry="3" fill="#f58da4" opacity=".75"/>
+ <path d="M34 70 Q45 75 56 70" fill="none" stroke="#ffffffbb" stroke-width="2"/>
+ </svg>`;
+}
+function renderMoods(){
+ $("moods").innerHTML=moods.map(m=>`<button type="button" class="mood ${m.id===selectedMood?"selected":""}" data-mood="${m.id}">${girlSVG(m)}<span>${m.label}</span></button>`).join("");
+ $("entryMood").innerHTML=moods.map(m=>`<option value="${m.id}">${m.label}</option>`).join("");
+ $("entryMood").value=selectedMood;
+ $("moods").querySelectorAll("[data-mood]").forEach(b=>b.addEventListener("click",()=>{
+   selectedMood=b.dataset.mood;state.lastMood=selectedMood;persist();renderMoods();
+ }));
+}
+function prepareDiary(){
+ $("entryMood").value=selectedMood;
+ $("entryDate").value=$("entryDate").value||today();
+ $("entryBody").value=$("quickThought").value;
+ go("diary-section");
+ $("entryTitle").focus();
+}
+
+/* ---------- PET SVG ART: side profiles, four legs, different species ---------- */
+function petSVG(kind){
+ if(kind==="cat") return `
+ <svg viewBox="0 0 110 88" aria-label="Mochi, kucing">
+  <g class="body">
+   <path d="M22 46 Q7 36 13 22 Q16 14 21 25 Q23 31 20 37" fill="none" stroke="#c98b66" stroke-width="7" stroke-linecap="round"/>
+   <path d="M18 46 Q24 33 49 36 Q69 36 77 49 L73 64 L26 64Z" fill="#f0bd91" stroke="#b9805f" stroke-width="1.8"/>
+   <path d="M29 60L28 76L36 76L40 60 M54 60L53 76L61 76L64 59" fill="#eab084" stroke="#b9805f" stroke-width="2" stroke-linejoin="round"/>
+   <g class="legs back"><path d="M37 59L37 75L44 75L47 59 M64 58L66 74L73 74L73 55" fill="#dca276" stroke="#b9805f" stroke-width="2" stroke-linejoin="round"/></g>
+   <path d="M62 42 Q75 36 80 27" stroke="#fff0d5" stroke-width="2" fill="none"/>
+   <path d="M65 48 Q82 48 89 56 Q94 61 88 68" fill="none" stroke="#c98b66" stroke-width="2.5"/>
+   <path d="M66 49 Q84 49 89 57" fill="none" stroke="#fff0d5" stroke-width="2"/>
+   <path d="M17 43 Q10 37 13 26 L25 33 Q29 21 39 29 L48 37 Q48 49 37 53 L24 50Z" fill="#f0bd91" stroke="#b9805f" stroke-width="2" stroke-linejoin="round"/>
+   <path d="M16 43L14 30L24 37 M30 34L38 33L39 41" fill="#e99d9f" stroke="#b9805f" stroke-width="1.5"/>
+   <ellipse cx="23" cy="43" rx="13" ry="10" fill="#f7d1a9"/>
+   <ellipse cx="16" cy="43" rx="2" ry="1.5" fill="#49353a"/>
+   <path d="M9 47L2 45 M9 49L2 51" stroke="#6d5146" stroke-width="1.3" stroke-linecap="round"/>
+   <path d="M29 41 Q32 43 29 46" stroke="#6d5146" stroke-width="1.5" fill="none"/>
+  </g>
+ </svg>`;
+ if(kind==="capy") return `
+ <svg viewBox="0 0 110 88" aria-label="Coco, kapibara">
+  <g class="body">
+   <path d="M20 49 Q10 45 14 39" stroke="#9b6946" stroke-width="5" stroke-linecap="round" fill="none"/>
+   <path d="M25 43 Q39 30 62 39 Q76 43 78 57 L73 66 L29 66 Q22 59 25 43Z" fill="#b98559" stroke="#895b3f" stroke-width="2"/>
+   <path d="M33 60L31 75L39 75L43 62 M59 61L59 75L67 75L69 61" fill="#a6754e" stroke="#895b3f" stroke-width="2" stroke-linejoin="round"/>
+   <g class="legs back"><path d="M43 60L43 74L50 74L52 61 M68 59L70 73L77 73L77 56" fill="#a6754e" stroke="#895b3f" stroke-width="2" stroke-linejoin="round"/></g>
+   <path d="M43 42 Q56 38 70 48" fill="none" stroke="#d9b187" stroke-width="2.2"/>
+   <path d="M27 43 Q18 37 21 28 Q28 23 37 31 L42 41Z" fill="#b98559" stroke="#895b3f" stroke-width="2"/>
+   <path d="M18 40 Q12 33 18 27 Q28 25 35 33 L39 42 Q37 53 26 55 L17 49Z" fill="#c28e60" stroke="#895b3f" stroke-width="2"/>
+   <ellipse cx="24" cy="46" rx="12" ry="8" fill="#d4a173"/>
+   <ellipse cx="15" cy="44" rx="3" ry="2.5" fill="#46312a"/>
+   <circle cx="25" cy="35" r="2.2" fill="#49352d"/>
+   <path d="M11 48L4 49" stroke="#895b3f" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+ </svg>`;
+ return `
+ <svg viewBox="0 0 110 88" aria-label="Ruru, rakun">
+  <g class="body">
+   <path d="M72 54 Q94 50 97 63 Q99 75 88 74 Q78 73 83 65 Q91 64 87 60 Q82 57 74 62" fill="#8e9db0" stroke="#66788e" stroke-width="3" stroke-linecap="round"/>
+   <path d="M79 59 Q91 57 89 64 Q88 68 83 68" fill="none" stroke="#e7eaf1" stroke-width="3"/>
+   <path d="M22 45 Q32 35 53 40 Q70 42 76 54 L73 64 L29 64Z" fill="#9ba9bb" stroke="#68798f" stroke-width="2"/>
+   <path d="M32 60L31 75L39 75L42 60 M58 60L58 75L66 75L68 60" fill="#8797ac" stroke="#68798f" stroke-width="2" stroke-linejoin="round"/>
+   <g class="legs back"><path d="M42 60L42 74L49 74L51 60 M68 59L69 73L76 73L76 57" fill="#8797ac" stroke="#68798f" stroke-width="2" stroke-linejoin="round"/></g>
+   <path d="M24 43L21 29L35 36L43 31L52 41Z" fill="#9ba9bb" stroke="#68798f" stroke-width="2" stroke-linejoin="round"/>
+   <path d="M24 34L24 30L31 36 M43 36L43 34L48 40" fill="#e9a8bd"/>
+   <path d="M17 42 Q19 31 31 31 Q44 31 49 41 L44 51 Q31 58 19 49Z" fill="#4e596d" stroke="#68798f" stroke-width="1.5"/>
+   <path d="M18 41L28 38L36 40L46 38L43 46L35 49L25 47Z" fill="#f5f0e7"/>
+   <ellipse cx="23" cy="43" rx="2" ry="2.5" fill="#1e2938"/>
+   <ellipse cx="38" cy="43" rx="2" ry="2.5" fill="#1e2938"/>
+   <path d="M26 49 Q31 52 35 49" stroke="#51434a" stroke-width="1.6" fill="none"/>
+  </g>
+ </svg>`;
+}
+function makePet(kind,name,x,y){
+ const el=document.createElement("div");
+ el.className="pet";
+ el.dataset.kind=kind;
+ el.innerHTML=petSVG(kind)+`<div class="petname">${name}</div>`;
+ $("room").insertBefore(el,$("snacks-layer"));
+ const p={kind,name,el,x,y,vx:0,vy:0,drag:false,turnCooldown:0};
+ pets.push(p);
+ positionPet(p);
+ el.addEventListener("pointerdown",e=>startPetDrag(e,p));
+ return p;
+}
+function positionPet(p){
+ p.el.style.left=p.x+"px";p.el.style.top=p.y+"px";
+}
+function startPetDrag(e,p){
+ if(sleeping)return;
+ e.preventDefault();
+ dragPet=p;p.drag=true;p.vx=0;p.vy=0;
+ const rect=$("room").getBoundingClientRect();
+ const startX=e.clientX,startY=e.clientY,px=p.x,py=p.y;
+ p.el.setPointerCapture?.(e.pointerId);
+ const move=ev=>{
+  p.x=Math.max(0,Math.min($("room").clientWidth-p.el.offsetWidth,px+ev.clientX-startX));
+  p.y=Math.max(0,Math.min($("room").clientHeight-p.el.offsetHeight,py+ev.clientY-startY));
+  positionPet(p);
+ };
+ const up=ev=>{
+  p.el.removeEventListener("pointermove",move);
+  p.el.removeEventListener("pointerup",up);
+  p.el.removeEventListener("pointercancel",up);
+  p.drag=false;p.vy=0.5;dragPet=null;
+  // Setelah dilepas, gravitasi akan membawa hewan ke lantai.
+ };
+ p.el.addEventListener("pointermove",move);
+ p.el.addEventListener("pointerup",up);
+ p.el.addEventListener("pointercancel",up);
+}
+function updatePets(dt){
+ const room=$("room");
+ const floor=room.clientHeight-88;
+ for(const p of pets){
+  if(p.drag)continue;
+  if(sleeping){p.vx=0;continue;}
+  if(walking && p.turnCooldown<=0){
+   if(Math.random()<dt*0.0008){
+    p.vx=(Math.random()<.5?-1:1)*0.20;
+    p.turnCooldown=1800+Math.random()*3000;
+   }
+  }
+  p.turnCooldown=Math.max(0,p.turnCooldown-dt);
+  p.vy+=0.00065*dt;
+  p.y+=p.vy*dt;
+  if(p.y>=floor){p.y=floor;p.vy=0;}
+  p.x+=p.vx*dt;
+  const maxX=room.clientWidth-p.el.offsetWidth;
+  if(p.x<0){p.x=0;p.vx=Math.abs(p.vx);}
+  if(p.x>maxX){p.x=maxX;p.vx=-Math.abs(p.vx);}
+  p.el.classList.toggle("walk",walking&&Math.abs(p.vx)>.04);
+  positionPet(p);
+ }
+}
+function animationLoop(t){
+ const dt=Math.min(32,lastTime? t-lastTime:16);
+ lastTime=t;
+ updatePets(dt);
+ updateSnacks(dt);
+ requestAnimationFrame(animationLoop);
+}
+
+/* ---------- FOOD: explicit position, gravity, floor collision, one-time eating ---------- */
+function snackSVG(type){
+ if(type==="apple")return `<svg viewBox="0 0 40 40"><path d="M20 11Q13 5 8 13Q2 25 14 33Q19 36 21 31Q24 36 30 31Q39 19 31 12Q25 7 20 11Z" fill="#f46f75" stroke="#b74b5d" stroke-width="2"/><path d="M20 12Q18 6 23 3" stroke="#79533a" stroke-width="2.5" fill="none"/><path d="M22 7Q28 2 31 7Q27 12 22 7Z" fill="#6dbb78"/></svg>`;
+ if(type==="cookie")return `<svg viewBox="0 0 40 40"><circle cx="20" cy="21" r="15" fill="#e6b36d" stroke="#bd8751" stroke-width="2"/><circle cx="13" cy="15" r="2.5" fill="#80503d"/><circle cx="25" cy="13" r="2.5" fill="#80503d"/><circle cx="27" cy="24" r="3" fill="#80503d"/><circle cx="16" cy="27" r="2.5" fill="#80503d"/></svg>`;
+ return `<svg viewBox="0 0 40 40"><path d="M10 18L34 12L27 29L10 18Z" fill="#ff9c56" stroke="#cf6d3c" stroke-width="2"/><path d="M11 18L6 10L15 15L17 7L22 14" fill="#6fbd7c" stroke="#4d9662" stroke-width="2" stroke-linejoin="round"/></svg>`;
+}
+function addSnack(type){
+ const layer=$("snacks-layer"),room=$("room");
+ const el=document.createElement("div");
+ el.className="snack";el.innerHTML=snackSVG(type)+`<span class="snack-label">${type}</span>`;
+ layer.appendChild(el);
+ const maxX=Math.max(0,room.clientWidth-42);
+ const s={
+  id:++snackId,type,el,
+  x:Math.max(0,Math.min(maxX,room.clientWidth/2-20)),
+  y:Math.max(0,room.clientHeight*.22),
+  vx:0,vy:0,drag:false,eaten:false,settled:false,falling:true
+ };
+ snacks.push(s);positionSnack(s);
+ el.addEventListener("pointerdown",e=>startSnackDrag(e,s));
+ $("snackStatus").textContent="Camilan muncul! Seret camilan sampai menyentuh tubuh temanmu.";
+}
+function positionSnack(s){
+ s.el.style.left=s.x+"px";s.el.style.top=s.y+"px";
+}
+function startSnackDrag(e,s){
+ if(s.eaten)return;
+ e.preventDefault();e.stopPropagation();
+ dragSnack=s;s.drag=true;s.vx=0;s.vy=0;s.settled=false;
+ const startX=e.clientX,startY=e.clientY,px=s.x,py=s.y;
+ try{s.el.setPointerCapture(e.pointerId)}catch{}
+ const move=ev=>{
+  if(s.eaten)return;
+  s.x=Math.max(0,Math.min($("room").clientWidth-40,px+ev.clientX-startX));
+  s.y=Math.max(0,Math.min($("room").clientHeight-40,py+ev.clientY-startY));
+  positionSnack(s);
+ };
+ const up=ev=>{
+  s.el.removeEventListener("pointermove",move);
+  s.el.removeEventListener("pointerup",up);
+  s.el.removeEventListener("pointercancel",up);
+  if(s.eaten)return;
+  s.drag=false;dragSnack=null;
+  // Kecepatan awal kecil; gravitasi membuat camilan jatuh secara konsisten.
+  s.vy=0.12;s.falling=true;s.settled=false;
+  checkSnackCollision(s);
+ };
+ s.el.addEventListener("pointermove",move);
+ s.el.addEventListener("pointerup",up);
+ s.el.addEventListener("pointercancel",up);
+}
+function intersects(a,b){
+ return a.x < b.x+b.el.offsetWidth &&
+ a.x+a.el.offsetWidth > b.x &&
+ a.y < b.y+b.el.offsetHeight &&
+ a.y+a.el.offsetHeight > b.y;
+}
+function checkSnackCollision(s){
+ if(!s||s.eaten||s.drag)return false;
+ const target=pets.find(p=>!p.drag&&intersects(s,p));
+ if(target){eatSnack(s,target);return true;}
+ return false;
+}
+function updateSnacks(dt){
+ const room=$("room");
+ const floor=room.clientHeight-49;
+ for(const s of [...snacks]){
+  if(s.eaten||s.drag)continue;
+  if(s.falling){
+   s.vy=Math.min(0.65,s.vy+0.0012*dt);
+   s.y+=s.vy*dt;
+  }
+  s.x=Math.max(0,Math.min(room.clientWidth-40,s.x+s.vx*dt));
+  if(s.y>=floor){
+   s.y=floor;s.vy=0;s.falling=false;s.settled=true;
+  }
+  positionSnack(s);
+  if(checkSnackCollision(s))continue;
+ }
+}
+function eatSnack(s,p){
+ if(!s||s.eaten)return;
+ // Kunci konsumsi sebelum animasi agar tidak bisa terjadi dua kali.
+ s.eaten=true;s.drag=false;s.falling=false;
+ s.el.style.pointerEvents="none";
+ s.el.remove();
+ snacks=snacks.filter(x=>x!==s);
+ p.el.classList.remove("walk");
+ p.el.animate([
+  {transform:"translateY(0) scale(1)"},
+  {transform:"translateY(-4px) scale(1.06)"},
+  {transform:"translateY(0) scale(1)"}
+ ],{duration:420,easing:"ease-in-out"});
+ $("snackStatus").textContent=p.name+" sedang menikmati "+s.type+"!";
+ playTone(620,.1);
+ setTimeout(()=>playTone(820,.12),120);
+}
+document.querySelectorAll("[data-snack]").forEach(b=>b.addEventListener("click",()=>addSnack(b.dataset.snack)));
+
+$("walkBtn").addEventListener("click",()=>{
+ walking=!walking;
+ $("walkBtn").textContent=walking?"Let them\\nrest":"Let them\\nwander";
+ $("walkBtn").classList.toggle("green",walking);
+ pets.forEach(p=>{if(walking&&p.vx===0){p.vx=.20;p.turnCooldown=2000;}});
+});
+$("sleepBtn").addEventListener("click",()=>{
+ sleeping=!sleeping;
+ $("room").classList.toggle("night",sleeping);
+ $("room").classList.toggle("sleeping-room",sleeping);
+ $("sleepBtn").textContent=sleeping?"Wake them up":"Sleepy\\ntime";
+ $("room").querySelectorAll(".pet").forEach(p=>p.classList.toggle("sleeping",sleeping));
+ if(sleeping){walking=false;$("walkBtn").textContent="Let them\\nwander";}
+ $("snackStatus").textContent=sleeping?"Shhh... semuanya sedang tidur.":"Teman-temanmu sudah bangun.";
+});
+
+/* ---------- SOUND: browser-generated tones, no external assets ---------- */
+function ensureAudio(){
+ if(!audioCtx){
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return null;
+  audioCtx=new AC();
+ }
+ if(audioCtx.state==="suspended")audioCtx.resume();
+ return audioCtx;
+}
+function playTone(freq,duration=.15){
+ const ctx=ensureAudio();if(!ctx)return;
+ const osc=ctx.createOscillator(),gain=ctx.createGain();
+ osc.type="sine";osc.frequency.value=freq;
+ gain.gain.setValueAtTime(.0001,ctx.currentTime);
+ gain.gain.exponentialRampToValueAtTime(.045,ctx.currentTime+.025);
+ gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+duration);
+ osc.connect(gain);gain.connect(ctx.destination);
+ osc.start();osc.stop(ctx.currentTime+duration+.02);
+}
+function musicStep(){
+ if(!musicOn)return;
+ const notes=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46];
+ let i=0;
+ musicTimer=setInterval(()=>{
+  if(!musicOn){clearInterval(musicTimer);return;}
+  playTone(notes[i%notes.length],.24);i++;
+ },450);
+}
+$("musicBtn").addEventListener("click",()=>{
+ musicOn=!musicOn;
+ $("musicBtn").textContent=musicOn?"Stop cozy\\nmusic":"Play cozy\\nmusic";
+ if(musicOn){ensureAudio();musicStep();}
+ else{clearInterval(musicTimer);}
+});
+
+/* ---------- DIARY ---------- */
+$("entryDate").value=today();
+$("diaryForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const date=$("entryDate").value;
+ const entry={
+  date,title:$("entryTitle").value.trim(),
+  mood:$("entryMood").value,body:$("entryBody").value.trim(),
+  gratitude:$("entryGratitude").value.trim(),song:$("entrySong").value.trim()
+ };
+ if(!date||!entry.title||!entry.body){$("saveStatus").textContent="Tanggal, judul, dan cerita perlu diisi.";return;}
+ const index=state.entries.findIndex(x=>x.date===date);
+ if(index>=0)state.entries[index]=entry;
+ else state.entries.push(entry);
+ state.entries.sort((a,b)=>b.date.localeCompare(a.date));
+ state.lastMood=entry.mood;selectedMood=entry.mood;
+ persist();renderMoods();renderEntries();renderGarden();
+ $("saveStatus").textContent="Cerita tersimpan. Satu hari baru sudah dirawat di tamanmu!";
+ $("quickThought").value="";
+});
+$("clearForm").addEventListener("click",()=>{
+ $("diaryForm").reset();$("entryDate").value=today();$("entryMood").value=selectedMood;
+ $("saveStatus").textContent="Form dikosongkan.";
+});
+function renderEntries(){
+ const q=$("searchEntries").value.toLowerCase().trim();
+ const found=state.entries.filter(e=>[e.date,e.title,e.body,e.mood,e.gratitude,e.song].join(" ").toLowerCase().includes(q));
+ $("entries").innerHTML=found.length?found.map(e=>`
+  <article class="entry">
+   <div class="section-title"><b>${escapeHTML(e.title)}</b><span class="small">${e.date}</span></div>
+   <p class="small">Mood: ${escapeHTML(e.mood||"Calm")}</p>
+   <p>${escapeHTML(e.body)}</p>
+   ${e.gratitude?`<p class="small">♡ Syukur: ${escapeHTML(e.gratitude)}</p>`:""}
+   ${e.song?`<p class="small">♫ ${escapeHTML(e.song)}</p>`:""}
+   <button class="pill" data-edit="${e.date}">Edit</button>
+   <button class="pill" data-delete="${e.date}">Delete</button>
+  </article>`).join(""):`<p class="small">Belum ada cerita yang cocok. Mulai tulis satu kenangan kecil hari ini.</p>`;
+ $("entries").querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>{
+  const e=state.entries.find(x=>x.date===b.dataset.edit);if(!e)return;
+  $("entryDate").value=e.date;$("entryTitle").value=e.title;$("entryMood").value=e.mood;
+  $("entryBody").value=e.body;$("entryGratitude").value=e.gratitude||"";$("entrySong").value=e.song||"";
+  go("diary-section");$("entryTitle").focus();
+ }));
+ $("entries").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>{
+  if(!confirm("Hapus diary tanggal "+b.dataset.delete+"?"))return;
+  state.entries=state.entries.filter(x=>x.date!==b.dataset.delete);
+  persist();renderEntries();renderGarden();
+ }));
+}
+function escapeHTML(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+$("searchEntries").addEventListener("input",renderEntries);
+
+/* ---------- WEEKLY GROWING FLOWERS ---------- */
+const flowers=[
+ {name:"Daisy Dream",petal:"#fff8ee",center:"#ffcf59",leaf:"#63b982"},
+ {name:"Pink Cosmos",petal:"#ff94b9",center:"#ffe17a",leaf:"#56b67e"},
+ {name:"Sunny Tulip",petal:"#ffad65",center:"#ffd86f",leaf:"#55aa79"},
+ {name:"Bluebell",petal:"#a6c4ff",center:"#fff0b5",leaf:"#4fb58c"},
+ {name:"Lavender Bloom",petal:"#c9a8ff",center:"#ffdf85",leaf:"#65ae7a"}
+];
+function flowerSVG(stage,flower,small=false){
+ const width=small?70:180;
+ if(stage===0)return `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="79" rx="35" ry="10" fill="#cda77e"/><path d="M18 79Q29 69 40 78T62 77T82 78" fill="none" stroke="#ae845d" stroke-width="3"/><circle cx="50" cy="73" r="2" fill="#916849"/></svg>`;
+ let stem=stage>=2?`<path d="M50 79 Q48 59 50 37" fill="none" stroke="${flower.leaf}" stroke-width="4" stroke-linecap="round"/><path d="M49 63 Q31 48 28 61 Q39 72 49 66 M50 55 Q66 39 72 49 Q66 61 50 58" fill="${flower.leaf}" stroke="#4c9c70" stroke-width="1.5"/>`:"";
+ let bud=stage===1?`<path d="M50 80L50 67" stroke="${flower.leaf}" stroke-width="4" stroke-linecap="round"/><path d="M50 68Q33 59 44 47Q50 39 56 47Q67 59 50 68Z" fill="${flower.leaf}" stroke="#4c9c70" stroke-width="1.5"/>`:"";
+ let closed=stage===2?`<path d="M50 40Q30 31 41 16Q50 8 59 16Q70 31 50 40Z" fill="${flower.petal}" stroke="#d99ca7" stroke-width="1.5"/>`:"";
+ let open=stage>=3?Array.from({length:8},(_,i)=>`<ellipse cx="50" cy="24" rx="8" ry="15" transform="rotate(${i*45} 50 39)" fill="${flower.petal}" stroke="#e8b2ad" stroke-width="1"/>`).join("")+`<circle cx="50" cy="39" r="9" fill="${flower.center}" stroke="#d4a34b" stroke-width="1.5"/>`:"";
+ return `<svg viewBox="0 0 100 100" role="img" aria-label="${stage===3?"Bunga mekar":"Tanaman tumbuh"}">${stem}${bud}${closed}${open}<ellipse cx="50" cy="84" rx="24" ry="6" fill="#d5b58a" opacity=".6"/></svg>`;
+}
+function growthStage(date){
+ const d=new Date(date+"T12:00:00");
+ const start=new Date(d.getFullYear(),0,1);
+ const day=Math.floor((d-start)/86400000);
+ // Stage repeats every 7 calendar days: soil, sprout, stem, bud, bloom.
+ return day%7;
+}
+function renderGarden(){
+ const dates=[...new Set(state.entries.map(e=>e.date))].sort();
+ const count=dates.length;
+ const now=today(),dayIndex=Math.floor((new Date(now+"T12:00:00")-new Date(new Date(now+"T12:00:00").getFullYear(),0,1))/86400000);
+ const stage=dayIndex%7;
+ const flower=flowers[Math.floor(dayIndex/7)%flowers.length];
+ const weekDates=dates.filter(d=>{
+  const di=Math.floor((new Date(d+"T12:00:00")-new Date(new Date(d+"T12:00:00").getFullYear(),0,1))/86400000);
+  return Math.floor(di/7)===Math.floor(dayIndex/7);
+ });
+ const progress=Math.min(7,weekDates.length);
+ $("gardenProgress").textContent=progress+"/7 diary days this week";
+ $("gardenMeter").style.width=(progress/7*100)+"%";
+ $("mainFlower").innerHTML=flowerSVG(progress===0?0:Math.min(3,Math.floor(progress*4/7)),flower);
+ const captions=["The soil is waiting for your first story.","A tiny sprout says hello.","Your little plant is reaching for the sun.","A little bud is getting ready.","Keep writing, little by little.","Almost time to bloom!","Your flower is ready to bloom!"];
+ $("flowerCaption").textContent=progress===0?captions[0]:captions[progress];
+ const start=new Date(now+"T12:00:00");start.setDate(start.getDate()-6);
+ const calendar=[];
+ for(let i=0;i<28;i++){
+  const d=new Date(start);d.setDate(start.getDate()+i);
+  const date=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const entry=state.entries.find(e=>e.date===date);
+  const di=Math.floor((d-new Date(d.getFullYear(),0,1))/86400000);
+  const fl=flowers[Math.floor(di/7)%flowers.length];
+  const stage=entry?Math.min(3,Math.floor((di%7+1)*4/7)):0;
+  calendar.push(`<div class="garden-cell" title="${date}${entry?" — diary saved":""}">${flowerSVG(stage,fl,true)}<small>${d.getDate()}</small></div>`);
+ }
+ $("gardenGrid").innerHTML=calendar.join("");
+}
+
+/* ---------- MEMORY JAR & FUTURE LETTER ---------- */
+function renderMemories(){
+ $("memoryList").innerHTML=state.memories.length?state.memories.slice().reverse().map((m,i)=>`
+ <article class="entry"><p>${escapeHTML(m.text)}</p><div class="small">${escapeHTML(m.date)}</div>
+ <button class="pill" data-memdelete="${state.memories.length-1-i}">Remove</button></article>`).join(""):"<p class='small'>Jar-mu masih kosong. Masukkan kenangan pertamamu.</p>";
+ $("memoryList").querySelectorAll("[data-memdelete]").forEach(b=>b.addEventListener("click",()=>{
+  state.memories.splice(Number(b.dataset.memdelete),1);persist();renderMemories();
+ }));
+}
+$("addMemory").addEventListener("click",()=>{
+ const text=$("memoryText").value.trim();if(!text)return;
+ state.memories.push({text,date:today()});$("memoryText").value="";
+ persist();renderMemories();
+});
+$("futureLetter").value=state.letter;
+$("saveLetter").addEventListener("click",()=>{
+ state.letter=$("futureLetter").value;persist();$("letterStatus").textContent="Surat untuk dirimu nanti sudah disimpan.";
+});
+
+/* ---------- BACKUP ---------- */
+$("exportBtn").addEventListener("click",()=>{
+ const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="my-little-diary-backup.json";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+$("importFile").addEventListener("change",async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{
+  const data=JSON.parse(await file.text());
+  if(!Array.isArray(data.entries)||!Array.isArray(data.memories))throw new Error("Format tidak sesuai");
+  if(!confirm("Import akan mengganti data diary yang sedang tersimpan. Lanjutkan?"))return;
+  state={
+   entries:data.entries,memories:data.memories,
+   letter:typeof data.letter==="string"?data.letter:"",
+   pin:typeof data.pin==="string"?data.pin:"",
+   lastMood:data.lastMood||"Calm"
+  };
+  pinCode=state.pin;persist();
+  renderMoods();renderEntries();renderGarden();renderMemories();
+  $("futureLetter").value=state.letter;
+  $("privacyStatus").textContent="Backup berhasil diimpor.";
+ }catch(err){alert("File backup tidak valid atau tidak bisa dibaca.");}
+ e.target.value="";
+});
+
+/* ---------- OPTIONAL SIMPLE DISPLAY LOCK ---------- */
+function setLocked(value){
+ unlocked=!value;
+ document.querySelectorAll("main > section").forEach(s=>{
+  if(s.id==="memory-section"||s.id==="diary-section"||s.id==="garden-section"){
+   s.classList.toggle("hidden",value);
+  }
+ });
+ $("privacyStatus").textContent=value?"Halaman diary disembunyikan di tampilan ini.":"Halaman diary ditampilkan kembali.";
+}
+$("pinBtn").addEventListener("click",()=>{
+ const p=prompt("Buat PIN angka (minimal 4 digit):");
+ if(p===null)return;
+ if(!/^\d{4,8}$/.test(p)){alert("PIN harus 4–8 digit angka.");return;}
+ state.pin=p;pinCode=p;persist();
+ $("privacyStatus").textContent="PIN disimpan di browser ini.";
+});
+$("lockBtn").addEventListener("click",()=>{
+ if(!pinCode){alert("Buat PIN terlebih dahulu.");return;}
+ setLocked(true);
+});
+$("unlockBtn").addEventListener("click",()=>{
+ if(!pinCode){setLocked(false);return;}
+ const p=prompt("Masukkan PIN diary:");
+ if(p===pinCode)setLocked(false);
+ else $("privacyStatus").textContent="PIN tidak cocok.";
+});
+
+/* ---------- INIT ---------- */
+renderMoods();
+renderEntries();
+renderGarden();
+renderMemories();
+
+const roomWidth=$("room").clientWidth;
+makePet("cat","Mochi",Math.max(5,roomWidth*.08),$("room").clientHeight-88);
+makePet("capy","Coco",Math.max(90,roomWidth*.39),$("room").clientHeight-88);
+makePet("raccoon","Ruru",Math.max(180,roomWidth*.69),$("room").clientHeight-88);
+
+window.addEventListener("resize",()=>{
+ const room=$("room");
+ for(const p of pets){
+  p.x=Math.max(0,Math.min(p.x,room.clientWidth-p.el.offsetWidth));
+  p.y=Math.min(p.y,room.clientHeight-p.el.offsetHeight);
+  positionPet(p);
+ }
+ for(const s of snacks){
+  s.x=Math.max(0,Math.min(s.x,room.clientWidth-40));
+  s.y=Math.min(s.y,room.clientHeight-40);
+  positionSnack(s);
+ }
+});
+requestAnimationFrame(animationLoop);
+</script>
+</body>
+</html>
